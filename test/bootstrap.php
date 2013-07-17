@@ -8,7 +8,8 @@
  * @author Ross Perkins <ross@vubeology.com>
  */
 
-require_once __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'autoload.php';
+$autoloadPhp = implode(DIRECTORY_SEPARATOR, array(__DIR__,'..','src','Vube','FileSystem','autoload.php'));
+require_once $autoloadPhp;
 
 $dir = sys_get_temp_dir() .DIRECTORY_SEPARATOR. 'vube-php-filesystem';
 

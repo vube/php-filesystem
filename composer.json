@@ -20,5 +20,8 @@
 		"phpunit/phpunit": "3.7.x-dev",
 		"mikey179/vfsStream": "*"
 	},
-	"minimum-stability": "dev"
+	"minimum-stability": "dev",
+	"autoload": {
+		"psr-0": {"Vube\\": "src/"}
+	}
 }
