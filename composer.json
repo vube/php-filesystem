@@ -3,7 +3,6 @@
 	"type": "library",
 	"description": "PHP classes for working with files and the file system",
 	"keywords": ["file system", "filesystem", "php library"],
-	"stability": "dev",
 	"license": "MIT",
 	"authors": [
 		{
@@ -22,6 +21,6 @@
 	},
 	"minimum-stability": "dev",
 	"autoload": {
-		"psr-0": {"Vube\\": "src/"}
+		"psr-0": {"Vube\\FileSystem\\": "src/"}
 	}
 }
