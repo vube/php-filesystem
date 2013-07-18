@@ -2,7 +2,7 @@
 <phpdoc>
 	<title><![CDATA[vube/php-filesystem]]></title>
 	<parser>
-		<target>data/phpdoc</target>
+		<target>build/phpdoc</target>
 		<markers>
 			<item>TODO</item>
 			<item>FIXME</item>
@@ -10,7 +10,7 @@
 		</markers>
 	</parser>
 	<transformer>
-		<target>data/phpdoc</target>
+		<target>build/phpdoc</target>
 	</transformer>
 	<transformations>
 		<template name="responsive" />
@@ -31,8 +31,8 @@
 	<logging>
 		<level>warn</level>
 		<paths>
-			<default>data/default.log</default>
-			<errors>data/errors.log</errors>
+			<default>build/default.log</default>
+			<errors>build/errors.log</errors>
 		</paths>
 	</logging>
 </phpdoc>
