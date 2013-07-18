@@ -23,4 +23,4 @@ function autoload($class)
 		require_once $path;
 }
 
-spl_autoload_register('\\Vube\\FileSystem\\autoload');
+spl_autoload_register('\\'.__NAMESPACE__.'\\autoload', true);
