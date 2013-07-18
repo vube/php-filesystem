@@ -11,7 +11,7 @@ namespace Vube\FileSystem;
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-class FileNameResolver {
+class FileNameResolver implements iFileNameResolver {
 
 	/**
 	 * Resolve a reference file/directory given a $base

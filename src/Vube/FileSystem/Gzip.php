@@ -11,7 +11,7 @@ namespace Vube\FileSystem;
  *
  * @author Ross Perkins <ross@vubeology.com>
  */
-class Gzip implements iZip {
+class Gzip implements iZipper {
 
 	/**
 	 * Read chunk size

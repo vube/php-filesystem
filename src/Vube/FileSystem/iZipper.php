@@ -11,7 +11,7 @@ namespace Vube\FileSystem;
  * 
  * @author Ross Perkins <ross@vubeology.com>
  */
-interface iZip {
+interface iZipper {
 
 	/**
 	 * Zip a file

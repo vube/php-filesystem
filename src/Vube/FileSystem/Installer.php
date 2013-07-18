@@ -14,7 +14,7 @@ use \Vube\FileSystem\Exception\CreateDirectoryException;
  *
  * @author Ross Perkins <ross@vubeology.com>
  */
-class Installer {
+class Installer implements iInstaller {
 
 	/**
 	 * Recursively mkdir with the appropriate $mode
@@ -146,6 +146,8 @@ class Installer {
 		// @silence rename() PHP warnings, we check for failure and throw our own exception
 		if(! @rename($sTempInstallPath, $sInstallPath))
 			throw new Exception("Unable to rename temp file to $sInstallPath", 21);
+
+		// TODO: Do we need to chmod() the install path or does it share the perms of the source path?
 	}
 
 	/**

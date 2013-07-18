@@ -17,7 +17,7 @@ use Vube\FileSystem\Exception\FileReadException;
  *
  * @author Ross Perkins <ross@vubeology.com>
  */
-class FileDiffer {
+class FileDiffer implements iFileDiffer {
 
 	/**
 	 * Read chunk size
@@ -27,6 +27,21 @@ class FileDiffer {
 	 * @var int
 	 */
 	const READ_SIZE = 16384; // 16 KB chunks
+
+	/**
+	 * Constructor
+	 * @param iFileNameResolver $resolver [optional]
+	 * <p>
+	 * If present, a custom file name resolver.
+	 * </p>
+	 */
+	public function __construct(iFileNameResolver $resolver=null)
+	{
+		if($resolver === null)
+			$resolver = new FileNameResolver();
+
+		$this->oFileNameResolver = $resolver;
+	}
 
 	/**
 	 * Are these two files different?
@@ -51,8 +66,7 @@ class FileDiffer {
 		if(! file_exists($first))
 			throw new NoSuchFileException($first);
 
-		$resolver = new FileNameResolver();
-		$second = $resolver->resolve($first, $second);
+		$second = $this->oFileNameResolver->resolve($first, $second);
 
 		// If the second file doesn't exist, they're definitely different
 		if(! file_exists($second))
@@ -87,4 +101,5 @@ class FileDiffer {
 		return false;
 	}
 
+	private $oFileNameResolver;
 }
