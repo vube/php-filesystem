@@ -29,10 +29,11 @@ class TempFile {
 	 * Destructor
 	 *
 	 * If the temp file exists, delete it.
+	 * Even if it is a symlink to a file that does NOT exist, delete it.
 	 */
 	public function __destruct()
 	{
-		if(file_exists($this->filename))
+		if(file_exists($this->filename) || is_link($this->filename))
 			unlink($this->filename);
 	}
 

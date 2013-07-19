@@ -28,11 +28,15 @@ class TempDirectory {
 	/**
 	 * Destructor
 	 *
-	 * If the temp directory exists, remove it.
+	 * If this is a symlink, remove the symlink.
+	 * Else if it is a directory, remove the directory.
 	 */
 	public function __destruct()
 	{
-		if(is_dir($this->directory))
+		if(is_link($this->directory))
+			unlink($this->directory);
+
+		else if(is_dir($this->directory))
 			rmdir($this->directory);
 	}
 
