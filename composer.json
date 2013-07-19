@@ -16,7 +16,7 @@
 		"php": ">=5.3.2"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "3.7.x-dev",
+		"phpunit/phpunit": "3.7.*@stable",
 		"mikey179/vfsStream": "~1.2.0",
 		"satooshi/php-coveralls": "dev-master"
 	},

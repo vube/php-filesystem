@@ -1,7 +1,6 @@
 # .travis.yml
 
 language: php
-
 php:
   - 5.3
   - 5.4
@@ -13,8 +12,9 @@ before_script:
 
 # Use our custom version of phpunit
 script:
+  - mkdir -p build/logs
   - php vendor/bin/phpunit
 
 # Run coveralls.io code coverage report
 after_script:
-  - php vendor/bin/coveralls
+  - php vendor/bin/coveralls -v
