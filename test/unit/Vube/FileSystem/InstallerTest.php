@@ -8,6 +8,7 @@ namespace Vube\FileSystem\test;
 use \org\bovigo\vfs\vfsStream;
 use \Vube\FileSystem\Installer;
 use \Vube\FileSystem\TempDirectory;
+use \Vube\FileSystem\TempFile;
 
 
 class InstallerTest extends \PHPUnit_Framework_TestCase {
@@ -258,6 +259,95 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 		$installer = new Installer();
 		$installer->installFile($this->vfsFilename('tmp/test1.txt'), $this->vfsFilename('install/test1.txt'));
 		$this->assertTrue($this->root->hasChild('root/install/test1.txt'), "Installed file exists");
+	}
+
+	/**
+	 * Test creating a symlink to an existing file, where the symlink does not yet exist.
+	 * Expect that the symlink is created.
+	 */
+	public function testSymlinkExistingTargetNewAlias()
+	{
+		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
+
+		file_put_contents('test-original.txt', 'contents');
+		if(file_exists('test-alias.txt') || is_link('test-alias.txt')) unlink('test-alias.txt');
+
+		$this->assertTrue(file_exists('test-original.txt'), "Created test-original.txt");
+		$this->assertFalse(file_exists('test-alias.txt'), "test-alias.txt file DOES NOT exist");
+
+		$installer = new Installer();
+		$installer->symlink('test-original.txt', 'test-alias.txt');
+
+		$this->assertTrue(file_exists('test-alias.txt'), "test-alias.txt symlink exists");
+		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt is a symlink");
+	}
+
+	/**
+	 * Test creating a symlink to an existing file, where a symlink by this name already exists.
+	 * Expect the symlink is updated to point to the new location.
+	 */
+	public function testSymlinkExistingTargetExistingAlias()
+	{
+		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
+
+		file_put_contents('test-original.txt', 'contents');
+		if(file_exists('test-alias.txt') || is_link('test-alias.txt')) unlink('test-alias.txt');
+		symlink('test-nonexist.txt', 'test-alias.txt'); // create test-alias.txt -> test-nonexist.txt
+
+		$this->assertTrue(file_exists('test-original.txt'), "Created test-original.txt");
+		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt IS an existing symlink");
+
+		$installer = new Installer();
+		$installer->symlink('test-original.txt', 'test-alias.txt');
+
+		$this->assertTrue(file_exists('test-alias.txt'), "test-alias.txt symlink exists");
+		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt is a symlink");
+	}
+
+	/**
+	 * Test creating a symlink to an existing file, where another file with the symlink name already exists.
+	 * Expect that the symlink is created and overwrites the existing file.
+	 */
+	public function testSymlinkExistingTargetWithAliasOverwriteExistingFile()
+	{
+		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
+
+		file_put_contents('test-original.txt', 'contents');
+		file_put_contents('test-alias.txt', 'actual file in the way');
+
+		$this->assertTrue(file_exists('test-original.txt'), "Created test-original.txt");
+		$this->assertTrue(file_exists('test-alias.txt'), "test-alias.txt starts as a regular file");
+
+		$installer = new Installer();
+		$installer->symlink('test-original.txt', 'test-alias.txt');
+
+		$this->assertTrue(file_exists('test-alias.txt'), "test-alias.txt symlink exists");
+		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt is a symlink");
+	}
+
+	/**
+	 * Test creating a symlink to a file that does not exist.
+	 * Expect that the symlink is created and points to the file that does not exist.
+	 */
+	public function testSymlinkMissingTargetNewAlias()
+	{
+		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
+
+		if(file_exists('test-missing.txt')) unlink('test-missing.txt');
+		if(file_exists('test-alias.txt') || is_link('test-alias.txt')) unlink('test-alias.txt');
+
+		$this->assertFalse(file_exists('test-missing.txt'), "test-missing.txt file DOES NOT exist");
+		$this->assertFalse(file_exists('test-alias.txt'), "test-alias.txt file DOES NOT exist");
+
+		$installer = new Installer();
+		$installer->symlink('test-missing.txt', 'test-alias.txt');
+
+		$this->assertFalse(file_exists('test-alias.txt'), "test-alias.txt file DOES NOT exist");
+		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt IS a symlink");
 	}
 
 	private $root;

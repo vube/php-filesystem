@@ -61,4 +61,19 @@ interface iInstaller {
 	 * @throws Exception if unable to install temp file and/or unable to rename it to the $sInstallPath
 	 */
 	public function installFile($sSourcePath, $sInstallPath);
+
+	/**
+	 * Atomic symlink
+	 *
+	 * This allows us to create symlinks that are moved into place atomically.
+	 * If an existing symlink exists, it will be replaced.
+	 * If a file exists at the symlink location, it will be overwritten.
+	 *
+	 * @param string $sOriginal Path to the original file
+	 * @param string $sAlias Name of the alias file
+	 * @throws Exception if there is any error
+	 *
+	 * @since 0.1.2
+	 */
+	public function symlink($sOriginal, $sAlias);
 }

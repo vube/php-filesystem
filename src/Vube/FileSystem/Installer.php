@@ -151,6 +151,32 @@ class Installer implements iInstaller {
 	}
 
 	/**
+	 * Atomic symlink
+	 *
+	 * This allows us to create symlinks that are moved into place atomically.
+	 * If an existing symlink exists, it will be replaced.
+	 * If a file exists at the symlink location, it will be overwritten.
+	 *
+	 * @param string $sOriginal Path to the original file
+	 * @param string $sAlias Name of the alias file
+	 * @throws Exception if there is any error
+	 *
+	 * @since 0.1.2
+	 */
+	public function symlink($sOriginal, $sAlias)
+	{
+		$sTempAlias = $this->findTempSafeInstallPath($sAlias);
+
+		// @silence symlink warnings, we check for failure and throw our own exception
+		if(! @symlink($sOriginal, $sTempAlias))
+			throw new Exception("Failed to create symlink to $sOriginal");
+
+		// @silence rename warnings, we check for failure and throw our own exception
+		if(! @rename($sTempAlias, $sAlias))
+			throw new Exception("Failed to rename temp symlink to $sAlias");
+	}
+
+	/**
 	 * Find an unused temporary safe install path
 	 *
 	 * @param string $sInstallPath The path where we really want to install this file
