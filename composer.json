@@ -2,7 +2,7 @@
 	"name": "vube/php-filesystem",
 	"type": "library",
 	"description": "PHP classes for working with files and the file system",
-	"keywords": ["file system", "filesystem", "php library"],
+	"keywords": ["vube", "file system", "filesystem", "php library"],
 	"license": "MIT",
 	"authors": [
 		{
