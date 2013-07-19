@@ -6,6 +6,7 @@
 namespace Vube\FileSystem\test;
 
 use org\bovigo\vfs\vfsStream;
+use Vube\FileSystem\TempFile;
 use Vube\FileSystem\TempDirectory;
 
 
@@ -45,6 +46,43 @@ class TempDirectoryTest extends \PHPUnit_Framework_TestCase {
 		$dir = 'temp'.rand().'.txt';
 		$this->createTempDirectory($dir);
 		$this->assertFalse($this->root->hasChild($dir), "Expect this directory was removed by implicit destruct");
+	}
+
+	public function testRecursiveTempDirectory()
+	{
+		vfsStream::create(array(
+			'recursive' => array(
+				'a' => array(
+					'1' => 'file',
+					'A' => array(),
+				),
+				'b' => array(),
+			),
+		), $this->root);
+
+		$temp = new TempDirectory(vfsStream::url('root/recursive'), true);
+		unset($temp);
+
+		$this->assertFalse($this->root->hasChild('recursive'), "recursive dir and its contents must have been deleted");
+	}
+
+	public function testSymlinkAsTempDirectory()
+	{
+		$temp = new TempFile('temp'); // remove file after this test
+
+		file_put_contents('temp', 'foo');
+		$this->assertFileExists('temp', "We must have created this file");
+
+		if(is_link('alias')) unlink('alias');
+		$this->assertFalse(is_link('alias'), "alias must have been deleted");
+
+		symlink('temp', 'alias');
+		$this->assertTrue(is_link('alias'), "alias must now have been created");
+
+		$tempDir = new TempDirectory('alias');
+		unset($tempDir);
+
+		$this->assertFalse(is_link('alias'), "alias must now have been deleted");
 	}
 
 	/**
