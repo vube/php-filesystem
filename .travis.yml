@@ -8,6 +8,7 @@ php:
 
 # Install dependencies before testing
 before_script:
+  - composer selfupdate
   - composer install --dev
 
 # Use our custom version of phpunit
