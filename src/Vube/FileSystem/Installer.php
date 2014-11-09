@@ -53,9 +53,6 @@ class Installer implements iInstaller {
 		if(is_dir($dir))
 			return false;
 
-		$parts = explode(DIRECTORY_SEPARATOR, $dir);
-		$n = count($parts);
-
 		$targetDir = $dir;
 		$dir = '';
 
@@ -65,19 +62,25 @@ class Installer implements iInstaller {
 		if(substr($targetDir, 0, 6) == 'vfs://')
 		{
 			$dir = 'vfs://';
-			array_splice($parts, 0, 2);
-			$n -= 2;
+            // vfs:// urls always have '/' in them, not '\\' even in Windows
+            $parts = explode('/', substr($targetDir, 6));
+            $n = count($parts);
 		}
+        else
+        {
+            $parts = explode(DIRECTORY_SEPARATOR, $targetDir);
+            $n = count($parts);
 
-		// Else if $dir was like "/absolute/dir" then we need to
-		// set $dir='/' and $parts=array('absolute','dir')
+            // If $dir was like "/absolute/dir" then we need to
+            // set $dir='/' and $parts=array('absolute','dir')
 
-		else if(strpos($targetDir, '/') === 0)
-		{
-			$dir = '/';
-			array_splice($parts, 0, 1);
-			$n--;
-		}
+            if(strpos($targetDir, DIRECTORY_SEPARATOR) === 0)
+            {
+                $dir = DIRECTORY_SEPARATOR;
+                array_splice($parts, 0, 1);
+                $n--;
+            }
+        }
 
 		$nPartsAdded = 0;
 

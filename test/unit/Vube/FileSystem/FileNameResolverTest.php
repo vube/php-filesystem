@@ -53,7 +53,7 @@ class FileNameResolverTest extends \PHPUnit_Framework_TestCase {
 		$fileX = $this->vfsFilename('b/file-1'); // expected result
 
 		$resolver = new FileNameResolver();
-		$result = $resolver->resolve($file1, $file2);
+		$result = $resolver->resolve($file1, $file2, '/');
 
 		$this->assertSame($fileX, $result, "Expect resolveFile to return '$fileX'");
 	}
@@ -65,7 +65,7 @@ class FileNameResolverTest extends \PHPUnit_Framework_TestCase {
 		$fileX = $this->vfsFilename('b/file-1'); // expected result
 
 		$resolver = new FileNameResolver();
-		$result = $resolver->resolve($file1, $file2);
+		$result = $resolver->resolve($file1, $file2, '/');
 
 		$this->assertSame($fileX, $result, "Expect resolveFile to return '$fileX'");
 	}
@@ -80,7 +80,7 @@ class FileNameResolverTest extends \PHPUnit_Framework_TestCase {
 		$fileX = $this->vfsFilename('b/a'); // expected result
 
 		$resolver = new FileNameResolver();
-		$result = $resolver->resolve($file1, $file2);
+		$result = $resolver->resolve($file1, $file2, '/');
 
 		$this->assertSame($fileX, $result, "Expect resolveFile to return '$fileX'");
 	}
@@ -95,7 +95,7 @@ class FileNameResolverTest extends \PHPUnit_Framework_TestCase {
 
 		$resolver = new FileNameResolver();
 		$this->setExpectedException('\\Vube\\FileSystem\\Exception');
-		$resolver->resolve($file1, $file2);
+		$resolver->resolve($file1, $file2, '/');
 	}
 
 	/**
@@ -108,7 +108,7 @@ class FileNameResolverTest extends \PHPUnit_Framework_TestCase {
 		$fileX = $this->vfsFilename('does-not-exist/file-1');
 
 		$resolver = new FileNameResolver();
-		$result = $resolver->resolve($file1, $file2);
+		$result = $resolver->resolve($file1, $file2, '/');
 
 		$this->assertSame($fileX, $result, "Expect resolveFile to return '$fileX'");
 	}

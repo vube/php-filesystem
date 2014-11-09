@@ -18,9 +18,10 @@ interface iFileNameResolver {
 	 *
 	 * @param string $base Base file/directory to use for resolving a directory $reference
 	 * @param string $reference A file or directory to resolve.
+     * @param string $sep Directory separator, defaults to OS setting.
 	 *
 	 * @return string Resolved name of the referenced file
 	 * @throws Exception If anything goes wrong resolving the $reference
 	 */
-	public function resolve($base, $reference);
+	public function resolve($base, $reference, $sep=DIRECTORY_SEPARATOR);
 }

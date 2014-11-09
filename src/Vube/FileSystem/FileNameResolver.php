@@ -23,6 +23,7 @@ class FileNameResolver implements iFileNameResolver {
 	 *
 	 * @param string $base Base path to use for resolving a directory $reference
 	 * @param string $reference A file or directory.
+     * @param string $sep Directory separator, defaults to OS setting
 	 * <p>
 	 * If a file, this is the value that gets returned.
 	 * </p>
@@ -38,7 +39,7 @@ class FileNameResolver implements iFileNameResolver {
 	 * @return string Resolved name of the referenced file
 	 * @throws Exception If $reference is a directory and $base is an empty string
 	 */
-	public function resolve($base, $reference)
+	public function resolve($base, $reference, $sep=DIRECTORY_SEPARATOR)
 	{
 		// Treat empty string the same as current dir
 
@@ -49,13 +50,13 @@ class FileNameResolver implements iFileNameResolver {
 		// this directory as $base
 
 		$refLen = strlen($reference);
-		$bEndsWithSlash = (strrpos($reference, DIRECTORY_SEPARATOR) === $refLen-1);
+		$bEndsWithSlash = (strrpos($reference, $sep) === $refLen-1);
 
 		if($bEndsWithSlash || is_dir($reference))
 		{
 			// If $reference doesn't end with a directory separator, append one
 			if(! $bEndsWithSlash)
-				$reference .= DIRECTORY_SEPARATOR;
+				$reference .= $sep;
 
 			// To resolve a directory reference to a $base file, the $base file
 			// must have a non-empty basename.

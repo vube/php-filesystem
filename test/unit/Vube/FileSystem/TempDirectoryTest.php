@@ -68,6 +68,10 @@ class TempDirectoryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testSymlinkAsTempDirectory()
 	{
+        // Symlinks don't work on Windows, so don't test this.
+        if(DIRECTORY_SEPARATOR === '\\')
+            return;
+
 		$temp = new TempFile('temp'); // remove file after this test
 
 		file_put_contents('temp', 'foo');
