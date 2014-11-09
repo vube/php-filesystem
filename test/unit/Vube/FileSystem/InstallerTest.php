@@ -225,7 +225,9 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse($this->root->hasChild($nonExistentDir), "Non-existent dir must not exist when test begins");
 
 		$installer = new Installer();
-		$installer->installFile($this->vfsFilename('tmp/test1.txt'), $this->vfsFilename("$nonExistentDir/$file"));
+        $test1File = $this->vfsFilename('tmp/test1.txt');
+        $newFile = $this->vfsFilename("$nonExistentDir/$file");
+		$installer->installFile($test1File, $newFile);
 
 		$this->assertTrue($this->root->hasChild($nonExistentDir), "Non-existent dir must exist after file install");
 		$this->assertTrue($this->root->hasChild("$nonExistentDir/$file"), "File must have been installed");
@@ -267,6 +269,10 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSymlinkExistingTargetNewAlias()
 	{
+        // Symlinks aren't implemented on Windows MSYS, so don't even test this.
+        if(DIRECTORY_SEPARATOR === '\\')
+            return;
+
 		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
 		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
 
@@ -289,7 +295,11 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSymlinkExistingTargetExistingAlias()
 	{
-		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+        // Symlinks aren't implemented on Windows MSYS, so don't even test this.
+        if(DIRECTORY_SEPARATOR === '\\')
+            return;
+
+        $tempO = new TempFile('test-original.txt'); // clean this file up after this test
 		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
 
 		file_put_contents('test-original.txt', 'contents');
@@ -312,7 +322,11 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSymlinkExistingTargetWithAliasOverwriteExistingFile()
 	{
-		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+        // Symlinks aren't implemented on Windows MSYS, so don't even test this.
+        if(DIRECTORY_SEPARATOR === '\\')
+            return;
+
+        $tempO = new TempFile('test-original.txt'); // clean this file up after this test
 		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
 
 		file_put_contents('test-original.txt', 'contents');
@@ -334,7 +348,11 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSymlinkMissingTargetNewAlias()
 	{
-		$tempO = new TempFile('test-original.txt'); // clean this file up after this test
+        // Symlinks aren't implemented on Windows MSYS, so don't even test this.
+        if(DIRECTORY_SEPARATOR === '\\')
+            return;
+
+        $tempO = new TempFile('test-original.txt'); // clean this file up after this test
 		$tempA = new TempFile('test-alias.txt'); // clean this file up after this test
 
 		if(file_exists('test-missing.txt')) unlink('test-missing.txt');
@@ -349,6 +367,27 @@ class InstallerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse(file_exists('test-alias.txt'), "test-alias.txt file DOES NOT exist");
 		$this->assertTrue(is_link('test-alias.txt'), "test-alias.txt IS a symlink");
 	}
+
+    public function testSymlinkThrowsExceptionsOnWindows()
+    {
+        // Symlinks aren't implemented on Windows MSYS, so don't even test this.
+        if(DIRECTORY_SEPARATOR !== '\\')
+            return;
+
+        $tempO = new TempFile('test-original.txt'); // clean this file up after this test
+        $tempA = new TempFile('test-alias.txt'); // clean this file up after this test
+
+        if(file_exists('test-missing.txt')) unlink('test-missing.txt');
+        if(file_exists('test-alias.txt') || is_link('test-alias.txt')) unlink('test-alias.txt');
+
+        $this->assertFalse(file_exists('test-missing.txt'), "test-missing.txt file DOES NOT exist");
+        $this->assertFalse(file_exists('test-alias.txt'), "test-alias.txt file DOES NOT exist");
+
+        $installer = new Installer();
+
+        $this->setExpectedException('\\Vube\\FileSystem\\Exception');
+        $installer->symlink('test-missing.txt', 'test-alias.txt');
+    }
 
 	private $root;
 }
