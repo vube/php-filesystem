@@ -99,6 +99,17 @@ class PathTranslatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($actual, $expect, "msys absolute path translation failed");
     }
 
+    public function testWindowsMsysAbsolutePathWithForwardSlashes()
+    {
+        $pathIn = 'C:/Windows/system';
+        $expect = '/c/Windows/system';
+
+        $xlate = new WindowsMsysPathTranslator();
+        $actual = $xlate->translate($pathIn);
+
+        $this->assertSame($actual, $expect, "msys absolute path translation failed");
+    }
+
     public function testWindowsCygwinRelativePath()
     {
         $pathIn = 'foo';
@@ -124,6 +135,17 @@ class PathTranslatorTest extends \PHPUnit_Framework_TestCase {
     public function testWindowsCygwinAbsolutePath()
     {
         $pathIn = 'C:\\Windows\\system';
+        $expect = '/cygdrive/c/Windows/system';
+
+        $xlate = new WindowsCygwinPathTranslator();
+        $actual = $xlate->translate($pathIn);
+
+        $this->assertSame($actual, $expect, "cygwin absolute path translation failed");
+    }
+
+    public function testWindowsCygwinAbsolutePathWithForwardSlashes()
+    {
+        $pathIn = 'C:/Windows/system';
         $expect = '/cygdrive/c/Windows/system';
 
         $xlate = new WindowsCygwinPathTranslator();

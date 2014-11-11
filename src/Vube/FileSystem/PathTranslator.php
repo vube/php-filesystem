@@ -28,32 +28,29 @@ class PathTranslator implements iPathTranslator
     {
         if(static::isWindowsOS())
         {
-            if(strpos($path, '\\') !== false)
+            if(preg_match('%^([A-Z]):(.*)%', $path, $matches))
             {
-                if(preg_match('%^([A-Z]):(.*)%', $path, $matches))
-                {
-                    // $path contains something like 'C:' at the start,
-                    // so it's an absolute path from the root.
+                // $path contains something like 'C:' at the start,
+                // so it's an absolute path from the root.
 
-                    $drive = $matches[1];
-                    $file = $matches[2];
-                    $unixFile = str_replace('\\', '/', $file);
+                $drive = $matches[1];
+                $file = $matches[2];
+                $unixFile = str_replace('\\', '/', $file);
 
-                    if(static::isWindowsMsys())
-                    {
-                        $path = '/' . strtolower($drive) . $unixFile;
-                    }
-                    else if(static::isWindowsCygwin())
-                    {
-                        $path = '/cygdrive/' . strtolower($drive) . $unixFile;
-                    }
-                }
-                else
+                if(static::isWindowsMsys())
                 {
-                    // $path does not look like 'C:' so we assume it to be relative
-                    if(static::isWindowsMsys() || static::isWindowsCygwin())
-                        $path = str_replace('\\', '/', $path);;
+                    $path = '/' . strtolower($drive) . $unixFile;
                 }
+                else if(static::isWindowsCygwin())
+                {
+                    $path = '/cygdrive/' . strtolower($drive) . $unixFile;
+                }
+            }
+            else
+            {
+                // $path does not look like 'C:' so we assume it to be relative
+                if(static::isWindowsMsys() || static::isWindowsCygwin())
+                    $path = str_replace('\\', '/', $path);;
             }
         }
 
