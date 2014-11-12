@@ -69,7 +69,7 @@ class PathTranslator implements iPathTranslator
 
     protected static function isWindowsMsys()
     {
-        return ! empty($_ENV['MSYSTEM']) && static::isWindowsOS();
+        return ! empty($_SERVER['MSYSTEM']) && static::isWindowsOS();
     }
 
     protected static function isWindowsCygwin()
