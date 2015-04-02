@@ -145,12 +145,35 @@ class Installer implements iInstaller {
 		if(! @copy($sSourcePath, $sTempInstallPath))
 			throw new Exception("Unable to copy file to temp install path: $sTempInstallPath", 17);
 
-		// Now rename the temp path to the final location
+        // Explicitly set the file owner and permissions of the newly copied file to be the same
+        // as the source path.  PHP copy() seems to disregard the settings of the source file and
+        // instead use the current proc's umask() and user identity.
+
+        clearstatcache(); // We don't care what the cache says, we want to know the current stat info
+
+        $hSrcStat = stat($sSourcePath);
+        $sSrcOwner = $hSrcStat['uid'];
+        $sSrcGroup = $hSrcStat['gid'];
+        $sSrcMode = $hSrcStat['mode'];
+
+        $hDstStat = stat($sTempInstallPath);
+        $sDstOwner = $hDstStat['uid'];
+        $sDstGroup = $hDstStat['gid'];
+        $sDstMode = $hDstStat['mode'];
+
+        if($sSrcOwner !== $sDstOwner)
+            @chown($sTempInstallPath, $sSrcOwner);
+
+        if($sSrcGroup !== $sDstGroup)
+            @chgrp($sTempInstallPath, $sSrcGroup);
+
+        if($sSrcMode !== $sDstMode)
+            @chmod($sTempInstallPath, $sSrcMode);
+
+        // Now rename the temp path to the final location
 		// @silence rename() PHP warnings, we check for failure and throw our own exception
 		if(! @rename($sTempInstallPath, $sInstallPath))
 			throw new Exception("Unable to rename temp file to $sInstallPath", 21);
-
-		// TODO: Do we need to chmod() the install path or does it share the perms of the source path?
 	}
 
 	/**
