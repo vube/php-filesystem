@@ -142,8 +142,14 @@ class Installer implements iInstaller {
 		$sTempInstallPath = $this->findTempSafeInstallPath($sInstallPath);
 
 		// @silence copy() PHP warnings, we check for failure and throw our own exception
+        $success = true;
+        $originalUmask = umask(0377); // set secure copy() permissions (read-only by current user, nobody else has ANY perms on it at all)
 		if(! @copy($sSourcePath, $sTempInstallPath))
-			throw new Exception("Unable to copy file to temp install path: $sTempInstallPath", 17);
+            $success = false;
+        umask($originalUmask); // reinstate original umask
+
+        if(! $success)
+            throw new Exception("Unable to copy file to temp install path: $sTempInstallPath", 17);
 
         // Explicitly set the file owner and permissions of the newly copied file to be the same
         // as the source path.  PHP copy() seems to disregard the settings of the source file and
